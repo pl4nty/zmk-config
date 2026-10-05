@@ -1,0 +1,11 @@
+/*
+ * Copyright (c) 2026 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include "splitkb_elora_rev1.dtsi"
+
+&left_encoder1 { status = "okay"; };
+&left_encoder2 { status = "okay"; };
+&left_encoder3 { status = "okay"; };

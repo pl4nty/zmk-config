@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: MIT
+
+description: |
+  Key scanner for a chain of 74HC165 parallel-in/serial-out shift registers,
+  read over SPI. Byte N of the transfer is reported as row N, and bit M of
+  that byte (bit 0 = least significant) as column M.
+
+  The chip select line must latch the registers: inactive loads the parallel
+  inputs, active shifts them out.
+
+compatible: "zmk,kscan-74hc165"
+
+include: [kscan.yaml, spi-device.yaml]
+
+properties:
+  num-bytes:
+    type: int
+    required: true
+    description: Number of chained shift registers (bytes read per scan).
+
+  active-low:
+    type: boolean
+    description: Inputs read 0 when the switch is closed (pull-ups to VCC).
+
+  poll-period-ms:
+    type: int
+    default: 1
+    description: Time between scans.
+
+  debounce-press-ms:
+    type: int
+    default: 5
+    description: Time a press must be stable before it is reported.
+
+  debounce-release-ms:
+    type: int
+    default: 5
+    description: Time a release must be stable before it is reported.

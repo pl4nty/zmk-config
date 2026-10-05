@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: MIT
+
+config ZMK_KSCAN_74HC165
+    bool "74HC165 shift register kscan driver"
+    default y
+    depends on DT_HAS_ZMK_KSCAN_74HC165_ENABLED
+    select SPI
+    help
+      Polls a chain of 74HC165 parallel-in/serial-out shift registers over SPI
+      and reports each input bit as a key.
+
+config ZMK_KSCAN_74HC165_ENCODER
+    bool "Rotary encoders read through a 74HC165 kscan"
+    default y
+    depends on ZMK_KSCAN_74HC165
+    depends on DT_HAS_ZMK_KSCAN_74HC165_ENCODER_ENABLED
+    select SENSOR

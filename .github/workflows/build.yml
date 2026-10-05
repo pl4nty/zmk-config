@@ -1,12 +1,24 @@
 on:
   push:
     paths:
+    - boards/**
     - config/**
+    - drivers/**
+    - dts/**
+    - zephyr/**
     - build.yaml
+    - CMakeLists.txt
+    - Kconfig
   pull_request:
     paths:
+    - boards/**
     - config/**
+    - drivers/**
+    - dts/**
+    - zephyr/**
     - build.yaml
+    - CMakeLists.txt
+    - Kconfig
   workflow_dispatch:
 
 jobs:

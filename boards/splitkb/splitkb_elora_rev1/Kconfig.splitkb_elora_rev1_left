@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: MIT
+
+config BOARD_SPLITKB_ELORA_REV1_LEFT
+    select SOC_RP2040
+    select RP2_FLASH_W25Q080
+    select ZMK_BOARD_COMPAT

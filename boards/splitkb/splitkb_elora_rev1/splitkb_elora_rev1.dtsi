@@ -1,0 +1,224 @@
+/*
+ * Copyright (c) 2026 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ *
+ * splitkb.com Elora rev1: on-board RP2040 per half, keys and encoders read
+ * through a chain of 74HC165 shift registers on SPI1, halves linked by a
+ * full-duplex UART. Pin assignments follow QMK's keyboards/splitkb/elora/rev1.
+ */
+
+/dts-v1/;
+
+#include <raspberrypi/rpi_pico/rp2040.dtsi>
+#include <arm/raspberrypi/rp2040-boot-mode-retention.dtsi>
+#include <freq.h>
+#include <zephyr/dt-bindings/led/led.h>
+#include <dt-bindings/zmk/matrix_transform.h>
+
+#include "splitkb_elora_rev1-pinctrl.dtsi"
+#include "splitkb_elora_rev1-layouts.dtsi"
+
+/ {
+    chosen {
+        zephyr,sram = &sram0;
+        zephyr,flash = &flash0;
+        zephyr,flash-controller = &ssi;
+        zephyr,code-partition = &code_partition;
+        zmk,kscan = &kscan;
+        zmk,physical-layout = &splitkb_elora_rev1_layout;
+        zmk,underglow = &led_strip;
+    };
+
+    aliases {
+        led-strip = &led_strip;
+    };
+
+    /*
+     * Left half: rows 0-4. Right half: rows 6-10 (row-offset in the right
+     * board). LPEDn/RPEDn are the external switch (pedal) inputs on each
+     * half's TRRS jack. Bits not listed here carry encoder signals.
+     */
+    default_transform: keymap_transform_0 {
+        compatible = "zmk,matrix-transform";
+        rows = <12>;
+        columns = <8>;
+// | MX101 | MX105 | MX109 | MX113 | MX117 | MX121 | LPED1 |   | RPED1 | MX221 | MX217 | MX213 | MX209 | MX205 | MX201 |
+// | MX102 | MX106 | MX110 | MX114 | MX118 | MX122 | LPED2 |   | RPED2 | MX222 | MX218 | MX214 | MX210 | MX206 | MX202 |
+// | MX103 | MX107 | MX111 | MX115 | MX119 | MX123 | LPED3 |   | RPED3 | MX223 | MX219 | MX215 | MX211 | MX207 | MX203 |
+// | MX104 | MX108 | MX112 | MX116 | MX120 | MX124 | MX131 | MX130 |   | MX230 | MX231 | MX224 | MX220 | MX216 | MX212 | MX208 | MX204 |
+//                 | MX125 | MX126 | MX127 | MX128 | MX129 |   | MX229 | MX228 | MX227 | MX226 | MX225 |
+        map = <
+RC(4,1) RC(4,2) RC(3,1) RC(3,2) RC(2,1) RC(2,2) RC(0,1)                 RC(6,6) RC(8,5) RC(8,6) RC(9,5) RC(9,6) RC(10,5) RC(10,6)
+RC(4,0) RC(4,3) RC(3,0) RC(3,3) RC(2,0) RC(2,3) RC(0,2)                 RC(6,5) RC(8,4) RC(8,7) RC(9,4) RC(9,7) RC(10,4) RC(10,7)
+RC(4,7) RC(4,4) RC(3,7) RC(3,4) RC(2,7) RC(2,4) RC(0,3)                 RC(6,4) RC(8,3) RC(8,0) RC(9,3) RC(9,0) RC(10,3) RC(10,0)
+RC(4,6) RC(4,5) RC(3,6) RC(3,5) RC(2,6) RC(2,5) RC(0,0) RC(0,4) RC(6,3) RC(6,7) RC(8,2) RC(8,1) RC(9,2) RC(9,1) RC(10,2) RC(10,1)
+                RC(1,7) RC(1,6) RC(1,5) RC(1,4) RC(0,5)                 RC(6,2) RC(7,3) RC(7,2) RC(7,1) RC(7,0)
+        >;
+    };
+
+    /*
+     * Encoder bits (row * 8 + column), from QMK's encoder_read_pads_from().
+     * Each board enables the encoders on its own half.
+     */
+    left_encoder1: left_encoder1 {
+        compatible = "zmk,kscan-74hc165-encoder";
+        status = "disabled";
+        kscan = <&kscan>;
+        a-bit = <6>;
+        b-bit = <7>;
+        steps = <40>;
+    };
+
+    left_encoder2: left_encoder2 {
+        compatible = "zmk,kscan-74hc165-encoder";
+        status = "disabled";
+        kscan = <&kscan>;
+        a-bit = <10>;
+        b-bit = <11>;
+        steps = <40>;
+    };
+
+    left_encoder3: left_encoder3 {
+        compatible = "zmk,kscan-74hc165-encoder";
+        status = "disabled";
+        kscan = <&kscan>;
+        a-bit = <8>;
+        b-bit = <9>;
+        steps = <40>;
+    };
+
+    right_encoder1: right_encoder1 {
+        compatible = "zmk,kscan-74hc165-encoder";
+        status = "disabled";
+        kscan = <&kscan>;
+        a-bit = <0>;
+        b-bit = <1>;
+        steps = <40>;
+    };
+
+    right_encoder2: right_encoder2 {
+        compatible = "zmk,kscan-74hc165-encoder";
+        status = "disabled";
+        kscan = <&kscan>;
+        a-bit = <12>;
+        b-bit = <13>;
+        steps = <40>;
+    };
+
+    right_encoder3: right_encoder3 {
+        compatible = "zmk,kscan-74hc165-encoder";
+        status = "disabled";
+        kscan = <&kscan>;
+        a-bit = <14>;
+        b-bit = <15>;
+        steps = <40>;
+    };
+
+    sensors: sensors {
+        compatible = "zmk,keymap-sensors";
+        sensors = <&left_encoder1 &left_encoder2 &left_encoder3
+                   &right_encoder1 &right_encoder2 &right_encoder3>;
+        triggers-per-rotation = <20>;
+    };
+
+    wired_split {
+        compatible = "zmk,wired-split";
+        device = <&uart1>;
+    };
+};
+
+&flash0 {
+    reg = <0x10000000 DT_SIZE_M(16)>;
+
+    partitions {
+        compatible = "fixed-partitions";
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        /* Reserved memory for the second stage bootloader */
+        second_stage_bootloader: partition@0 {
+            label = "second_stage_bootloader";
+            reg = <0x00000000 0x100>;
+            read-only;
+        };
+
+        code_partition: partition@100 {
+            label = "code";
+            reg = <0x100 (DT_SIZE_M(16) - 0x100 - DT_SIZE_K(512))>;
+            read-only;
+        };
+
+        storage_partition: partition@f80000 {
+            label = "storage";
+            reg = <0xf80000 DT_SIZE_K(512)>;
+        };
+    };
+};
+
+&gpio0 {
+    status = "okay";
+};
+
+&uart1 {
+    status = "okay";
+    current-speed = <115200>;
+    pinctrl-0 = <&uart1_default>;
+    pinctrl-names = "default";
+};
+
+&spi1 {
+    status = "okay";
+    pinctrl-0 = <&spi1_default>;
+    pinctrl-names = "default";
+    clock-frequency = <DT_FREQ_M(1)>;
+    /*
+     * GP13 latches the switch shift registers. GP9 selects a Myriad module;
+     * listing it keeps it driven inactive so a module cannot contend for MISO.
+     */
+    cs-gpios = <&gpio0 13 GPIO_ACTIVE_LOW>, <&gpio0 9 GPIO_ACTIVE_LOW>;
+
+    kscan: kscan@0 {
+        compatible = "zmk,kscan-74hc165";
+        reg = <0>;
+        spi-max-frequency = <DT_FREQ_M(1)>;
+        num-bytes = <5>;
+        active-low;
+    };
+};
+
+&pio0 {
+    status = "okay";
+
+    pio-ws2812 {
+        compatible = "worldsemi,ws2812-rpi_pico-pio";
+        status = "okay";
+        pinctrl-0 = <&ws2812_pio0_default>;
+        pinctrl-names = "default";
+        bit-waveform = <3>, <3>, <4>;
+
+        led_strip: ws2812 {
+            status = "okay";
+            gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+            chain-length = <6>;
+            color-mapping = <LED_COLOR_ID_GREEN
+                             LED_COLOR_ID_RED
+                             LED_COLOR_ID_BLUE>;
+            reset-delay = <280>;
+            frequency = <800000>;
+        };
+    };
+};
+
+zephyr_udc0: &usbd {
+    status = "okay";
+};
+
+&vreg {
+    regulator-always-on;
+    regulator-allowed-modes = <REGULATOR_RPI_PICO_MODE_NORMAL>;
+};
+
+&xosc {
+    startup-delay-multiplier = <64>;
+};
