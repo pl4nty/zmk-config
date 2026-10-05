@@ -1,0 +1,56 @@
+/*
+ * Gboard Yunomi (Pro Micro base PCB), with a nice!nano in place of the Pro Micro.
+ * https://github.com/google/mozc-devices/tree/main/mozc-yunomi
+ *
+ * The 12 key PCBs form a duplex matrix: 6 "column" pins x 5 "row" pins, and
+ * six of the PCBs have reversed diodes, so each pin pair carries two keys.
+ * The charlieplex driver scans every direction, which covers this.
+ *
+ * Stock firmware drives one pin LOW and senses the other with a pull-up
+ * (current flows sensed -> driven). The charlieplex driver drives HIGH and
+ * senses with a pull-down (current flows row -> col), so each stock
+ * {sensed, driven} pair becomes RC(sensed, driven).
+ */
+
+#include <dt-bindings/zmk/matrix_transform.h>
+
+/ {
+    chosen {
+        zmk,kscan = &kscan0;
+        zmk,matrix-transform = &default_transform;
+    };
+
+    /* Rows top to bottom, columns around the cup, as in firmware.ino keys[][] */
+    default_transform: keymap_transform_0 {
+        compatible = "zmk,matrix-transform";
+        rows = <11>;
+        columns = <11>;
+        map = <
+RC(0,10) RC(1,6) RC(2,7) RC(3,8) RC(4,9) RC(5,10) RC(6,0) RC(7,1) RC(8,2) RC(9,3) RC(10,4) RC(6,5)
+RC(0,9) RC(1,10) RC(2,6) RC(3,7) RC(4,8) RC(5,9) RC(10,0) RC(6,1) RC(7,2) RC(8,3) RC(9,4) RC(10,5)
+RC(0,8) RC(1,9) RC(2,10) RC(3,6) RC(4,7) RC(5,8) RC(9,0) RC(10,1) RC(6,2) RC(7,3) RC(8,4) RC(9,5)
+RC(0,7) RC(1,8) RC(2,9) RC(3,10) RC(4,6) RC(5,7) RC(8,0) RC(9,1) RC(10,2) RC(6,3) RC(7,4) RC(8,5)
+RC(0,6) RC(1,7) RC(2,8) RC(3,9) RC(4,10) RC(5,6) RC(7,0) RC(8,1) RC(9,2) RC(10,3) RC(6,4) RC(7,5)
+        >;
+    };
+
+    kscan0: kscan_0 {
+        compatible = "zmk,kscan-gpio-charlieplex";
+        /* No interrupt pin on the base PCB, so poll. 10 ms instead of the
+         * 1 ms default to reduce idle current. */
+        poll-period-ms = <10>;
+        gpios
+            = <&pro_micro 9 GPIO_ACTIVE_HIGH>   /* 0  C0 */
+            , <&pro_micro 8 GPIO_ACTIVE_HIGH>   /* 1  C1 */
+            , <&pro_micro 7 GPIO_ACTIVE_HIGH>   /* 2  C2 */
+            , <&pro_micro 6 GPIO_ACTIVE_HIGH>   /* 3  C3 */
+            , <&pro_micro 5 GPIO_ACTIVE_HIGH>   /* 4  C4 */
+            , <&pro_micro 4 GPIO_ACTIVE_HIGH>   /* 5  C5 */
+            , <&pro_micro 18 GPIO_ACTIVE_HIGH>  /* 6  R0 */
+            , <&pro_micro 15 GPIO_ACTIVE_HIGH>  /* 7  R1 */
+            , <&pro_micro 14 GPIO_ACTIVE_HIGH>  /* 8  R2 */
+            , <&pro_micro 16 GPIO_ACTIVE_HIGH>  /* 9  R3 */
+            , <&pro_micro 10 GPIO_ACTIVE_HIGH>  /* 10 R4 */
+            ;
+    };
+};
