@@ -1,0 +1,6 @@
+if SHIELD_YUNOMI
+
+config ZMK_KEYBOARD_NAME
+    default "Yunomi"
+
+endif

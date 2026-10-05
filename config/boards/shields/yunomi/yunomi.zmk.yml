@@ -1,0 +1,8 @@
+file_format: "1"
+id: yunomi
+name: Gboard Yunomi
+type: shield
+url: https://github.com/google/mozc-devices/tree/main/mozc-yunomi
+requires: [pro_micro]
+features:
+  - keys
