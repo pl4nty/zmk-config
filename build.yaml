@@ -17,3 +17,5 @@ include:
     shield: sofle_left
   - board: nice_nano//zmk
     shield: sofle_right
+  - board: splitkb_elora_rev1_left
+  - board: splitkb_elora_rev1_right

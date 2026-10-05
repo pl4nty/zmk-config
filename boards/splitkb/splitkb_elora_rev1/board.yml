@@ -1,0 +1,11 @@
+boards:
+  - name: splitkb_elora_rev1_left
+    full_name: Elora rev1 (left)
+    vendor: splitkb
+    socs:
+      - name: rp2040
+  - name: splitkb_elora_rev1_right
+    full_name: Elora rev1 (right)
+    vendor: splitkb
+    socs:
+      - name: rp2040

@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: MIT
+
+description: |
+  Quadrature rotary encoder whose A and B pins are inputs of a
+  zmk,kscan-74hc165 shift register chain. Bits are numbered
+  row * 8 + column, using the kscan's row/column numbering.
+  These bits are not reported as keys.
+
+compatible: "zmk,kscan-74hc165-encoder"
+
+properties:
+  kscan:
+    type: phandle
+    required: true
+    description: The zmk,kscan-74hc165 node the encoder is wired to.
+
+  a-bit:
+    type: int
+    required: true
+
+  b-bit:
+    type: int
+    required: true
+
+  steps:
+    type: int
+    required: true
+    description: Quadrature transitions per full rotation.

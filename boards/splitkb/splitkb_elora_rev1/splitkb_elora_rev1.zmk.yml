@@ -1,0 +1,15 @@
+file_format: "1"
+id: splitkb_elora_rev1
+name: Elora rev1
+type: board
+arch: arm
+features:
+  - keys
+  - encoder
+  - underglow
+outputs:
+  - usb
+url: https://splitkb.com/products/elora
+siblings:
+  - splitkb_elora_rev1_left
+  - splitkb_elora_rev1_right
